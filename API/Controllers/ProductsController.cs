@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -11,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers {
     public class ProductsController : BaseApiController {
-
         private readonly IGenericRepository<Product> _productsRepo;
         private readonly IGenericRepository<ProductBrand> _productsBrandRepo;
         private readonly IGenericRepository<ProductType> _productsTypeRepo;
@@ -30,14 +30,20 @@ namespace API.Controllers {
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts() {
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery]ProductsSpecParams productParams) {
 
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
+
+            var countSpec = new ProductsWithFiltersForCountSpecification(productParams);
+
+            var totalItems = await this._productsRepo.CountAsync(countSpec);
 
             var products = await this._productsRepo.ListAsync(spec);
 
-            return Ok(this._mapper
-                   .Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
+            var data = this._mapper
+                   .Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.PageSize, totalItems, data));
         }
 
         [HttpGet("{id}")]
@@ -49,7 +55,7 @@ namespace API.Controllers {
 
             var product = await this._productsRepo.GetEntityWithSpec(spec);
 
-            if(product == null) return NotFound(new ApiResponse(404));
+            if (product == null) return NotFound(new ApiResponse(404));
 
             return _mapper.Map<Product, ProductToReturnDto>(product);
         }

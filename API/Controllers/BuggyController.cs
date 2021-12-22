@@ -13,8 +13,8 @@ namespace API.Controllers {
         public ActionResult GetNotFoundRequest() {
             var thing = _context.Products.Find(41);
 
-            if(thing == null) return NotFound(new ApiResponse(404));
-            
+            if (thing == null) return NotFound(new ApiResponse(404));
+
             return Ok();
         }
 
