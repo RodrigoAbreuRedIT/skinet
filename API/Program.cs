@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using Core.Entities.Identity;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,11 +22,18 @@ namespace API
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
                 // aplica qualquer migração pendente para um contexto para a base de dados
-                // e criará o base de dados sele ela não existir.
+                // e criará o base de dados se ela não existir.
                 try{
+                    
                     var context = services.GetRequiredService<StoreContext>();
                     await context.Database.MigrateAsync();
                     await StoreContextSeed.SeedAsync(context, loggerFactory);
+
+                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                    var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+                    await identityContext.Database.MigrateAsync();
+                    await AppIdentityDbContextSeed.SeedUserAsync(userManager);
+                    
                 } catch(Exception e){
                     var logger = loggerFactory.CreateLogger<Program>();
                     logger.LogError(e, "An error Accured during migration");

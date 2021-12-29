@@ -10,7 +10,7 @@ namespace Infrastructure.Data {
         public DbSet<ProductType> ProductTypes { get; set; }
 
         // --- Construct ---
-        public StoreContext(DbContextOptions options) : base(options) { }
+        public StoreContext(DbContextOptions<StoreContext> options) : base(options) { }
         // ----------------------------------------------------------------
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
