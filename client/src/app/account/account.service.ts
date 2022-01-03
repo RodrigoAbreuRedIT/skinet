@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, of, ReplaySubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { IAddress } from '../shared/models/address';
 import { IUser } from '../shared/models/user';
 
 @Injectable({
@@ -14,10 +15,10 @@ export class AccountService {
   currentUser$ = this._currentUserSource.asObservable();
 
   constructor(private http: HttpClient,
-              private router: Router) { }  
-  
+    private router: Router) { }
+
   loadCurrentUser(token: string) {
-    if(token === null){
+    if (token === null) {
       this._currentUserSource.next(null)
       return of(null)
     }
@@ -25,21 +26,21 @@ export class AccountService {
     let headers = new HttpHeaders()
     headers = headers.set('Authorization', `Bearer ${token}`)
 
-    return this.http.get(this.baseUrl + 'account', {headers})
+    return this.http.get(this.baseUrl + 'account', { headers })
       .pipe(
         map((user: IUser) => {
-          if(user)
+          if (user)
             localStorage.setItem('token', user.token)
-            this._currentUserSource.next(user)
+          this._currentUserSource.next(user)
         })
       )
   }
 
-  login(values: any){
+  login(values: any) {
     return this.http.post(this.baseUrl + 'account/login', values)
       .pipe(
         map((user: IUser) => {
-          if(user){
+          if (user) {
             localStorage.setItem('token', user.token)
             this._currentUserSource.next(user)
           }
@@ -47,25 +48,33 @@ export class AccountService {
       )
   }
 
-  register(values: any){
+  register(values: any) {
     return this.http.post(this.baseUrl + 'account/register', values)
-    .pipe(
-      map((user: IUser) => {
-        if(user){
-          localStorage.setItem('token', user.token)
-          this._currentUserSource.next(user)
-        }
-      })
-    )
+      .pipe(
+        map((user: IUser) => {
+          if (user) {
+            localStorage.setItem('token', user.token)
+            this._currentUserSource.next(user)
+          }
+        })
+      )
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('token')
     this._currentUserSource.next(null)
     this.router.navigateByUrl("/")
   }
 
-  checkEmailExists(email: string){
-    return this.http.get(this.baseUrl + 'account/emailexists?email='+ email)
+  checkEmailExists(email: string) {
+    return this.http.get(this.baseUrl + 'account/emailexists?email=' + email)
+  }
+
+  getUserAddress() {
+    return this.http.get<IAddress>(this.baseUrl + 'account/address')
+  }
+
+  UpdateUserAddress(address: IAddress) {
+    return this.http.put<IAddress>(this.baseUrl + 'account/address', address)
   }
 }
