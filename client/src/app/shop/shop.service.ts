@@ -22,7 +22,7 @@ export class ShopService {
 
     if (shopParams.typeID !== 0) params = params.append("typeId", shopParams.typeID.toString());
 
-    if(shopParams.search) params = params.append('search', shopParams.search);
+    if (shopParams.search) params = params.append('search', shopParams.search);
 
     params = params.append("sort", shopParams.sort);
     params = params.append('pageIndex', shopParams.pageNumber.toString());
@@ -36,7 +36,7 @@ export class ShopService {
       )
   }
 
-  getProduct(id: number){
+  getProduct(id: number) {
     return this.http.get<IProduct>(this.baseUrl + 'products/' + id);
   }
 
