@@ -1,28 +1,32 @@
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="row">
-        <div class="col-8">
-            <app-stepper [linearModeSelected]="false" #appStepper>
+        <div class="col-8 p-0" style="background-color: #e9ecef;">
+            <app-stepper [linearModeSelected]="true" #appStepper>
                 <cdk-step [label]="'Address'" [completed]="(checkoutForm.get('addressForm')).valid">
-                    <app-checkout-address [checkoutForm]="this.checkoutForm"></app-checkout-address>
+                    <div class="pl-5 pr-5">
+                        <app-checkout-address [checkoutForm]="this.checkoutForm"></app-checkout-address>
+                    </div>
                 </cdk-step>
                 <cdk-step [label]="'Delivery Method'" [completed]="(checkoutForm.get('deliveryForm')).valid">
-                    <app-checkout-delivery [checkoutForm]="this.checkoutForm"></app-checkout-delivery>
+                    <div class="pl-5 pr-5">
+                        <app-checkout-delivery [checkoutForm]="this.checkoutForm"></app-checkout-delivery>
+                    </div>
                 </cdk-step>
                 <cdk-step [label]="'Review'">
-                    <app-checkout-review></app-checkout-review>
+                    <div class="pl-5 pr-5">
+                        <app-checkout-review [appStepper]="appStepper"></app-checkout-review>
+                    </div>
                 </cdk-step>
                 <cdk-step [label]="'Payment'">
-                    <app-checkout-payment [checkoutForm]="checkoutForm"></app-checkout-payment>
+                    <div class="pl-5 pr-5">
+                        <app-checkout-payment [checkoutForm]="checkoutForm"></app-checkout-payment>
+                    </div>
                 </cdk-step>
             </app-stepper>
         </div>
         <div class="col-4">
-            <app-order-totals
-                *ngIf="(basketTotals$ | async) as basketTotals"
-                [shippingPrice]="basketTotals.shipping"
-                [subtotal]="basketTotals.subtotal"
-                [total]="basketTotals.total"
-            ></app-order-totals>
+            <app-order-totals *ngIf="(basketTotals$ | async) as basketTotals" [shippingPrice]="basketTotals.shipping"
+                [subtotal]="basketTotals.subtotal" [total]="basketTotals.total"></app-order-totals>
         </div>
     </div>
 </div>

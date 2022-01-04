@@ -1,14 +1,18 @@
-<div class="container">
-    <ul class="nav nav-pills nav-justified">
-        <li class="nav-item" *ngFor="let step of steps; let i = index">
-            <button
-                (click)="this.onClick(i)"
-                [class.active] = "selectedIndex === i "
-                class="nav-link py-3 text-uppercase font-weight-bold btn-block">
-                {{step.label}}:{{step.completed}}
-            </button>
-        </li>
-    </ul>
+<div class="container p-0">
+    <div class="border-bottom border-dark">
+        <ul class="nav nav-pills nav-justified">
+            <li class="nav-item" *ngFor="let step of steps; let i = index">
+                <button
+                    (click)="this.onClick(i)"
+                    [disabled]="true"
+                    [class.active] = "selectedIndex === i "
+                    class="nav-link py-3 text-uppercase font-weight-bold btn-block">
+                    {{step.label}}
+                </button>
+            </li>
+        </ul>
+    </div>
+    
     <div>
         <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
     </div>
